@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/bin"
+        android:title="@string/bin"
+        app:showAsAction="never"
+        android:enabled="true"
+    />
+    <item
+        android:id="@+id/oct"
+        android:title="@string/oct"
+        app:showAsAction="never"
+        android:enabled="true"
+    />
+    <item
+        android:id="@+id/dec"
+        android:title="@string/dec"
+        app:showAsAction="never"
+        android:enabled="true"
+        />
+    <item
+        android:id="@+id/hex"
+        android:title="@string/hex"
+        app:showAsAction="never"
+        android:enabled="true"
+        />
+    <item
+        android:id="@+id/function_button"
+        android:title="@string/fn"
+        app:showAsAction="ifRoom"
+        android:onClick="onClickOptionFn"
+        />
+</menu>
