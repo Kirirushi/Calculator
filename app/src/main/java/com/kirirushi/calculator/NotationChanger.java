@@ -21,7 +21,7 @@ public class NotationChanger {
             }
         //перевод из inputNotation в десятичную
             int counterDot = iString.indexOf(decimalDot);
-            if(counterDot>0){
+            if(counterDot>=0){
                 iString = iString.substring(0,counterDot)+iString.substring(counterDot+1);
                 int count = 0;
                 for(int i = counterDot-1;i>=counterDot-iString.length();i--){
@@ -32,10 +32,10 @@ public class NotationChanger {
                 }
             }else
             {
-                for(int i = 0;i<iString.length();i++){
-                    char c = iString.charAt(i);
+                for(int i = iString.length();i>0;i--){
+                    char c = iString.charAt(iString.length()-i);
                     int d = inputDigits.indexOf(c);
-                    result+=d*Math.pow(inputNotation,i);
+                    result+=d*Math.pow(inputNotation,i-1);
                 }
             }
         //перевод из десятичной в outputNotation
