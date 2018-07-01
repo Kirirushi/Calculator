@@ -241,10 +241,10 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
         buttons.add((Button) findViewById(R.id.button_7));
         buttons.add((Button) findViewById(R.id.button_8));
         buttons.add((Button) findViewById(R.id.button_9));
-        for (Button button:buttons)
-            button.setEnabled(false);
         if(changedFnKeyboard)
             return true;
+        for (Button button:buttons)
+            button.setEnabled(false);
         switch (item.getItemId()){
             case R.id.bin:
                 if(!textView.getText().toString().isEmpty()) {
