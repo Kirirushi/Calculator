@@ -75,6 +75,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
         TextView textView =  findViewById(R.id.text_view);
         textView.setText("");
     }
+    private void pasteStringInTextView(TextView textView,String string){
+        if(!textView.getText().toString().isEmpty())
+            textView.append('\n'+string);
+        else
+            textView.append(string);
+    }
+    private void createTimerForScrolling(final ScrollView scrollView){
+        new CountDownTimer(100,100) {
+            public void onTick(long millisUntilFinished) {
+            }
+            public void onFinish() {
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            }
+        }.start();
+    }
     public void onClickEqual(View view){
         TextView textView = findViewById(R.id.text_view);
         TextView historyTextView = findViewById(R.id.history);
@@ -83,24 +98,16 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
         try {
             double result = parser.evaluate(textView.getText().toString(), notation);
             String resStr;
-            resStr = NotationChanger.changeNotation(Double.toString(result),10,notation);
-
-            if(!historyTextView.getText().toString().isEmpty())
-                historyTextView.append('\n'+textView.getText().toString()+"="+resStr);
-            else
-                historyTextView.append(textView.getText().toString()+"="+resStr);
+            resStr = NotationChanger.changeNotation(
+                    Double.toString(result),
+                    10,
+                    notation);
+            pasteStringInTextView(historyTextView,textView.getText().toString()+"="+resStr);
         } catch (ParserException e){
-            Toast toast = Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT);
-            toast.show();
+             showToast(e.toString());
         }
         textView.setText("");
-        new CountDownTimer(100,100) {
-            public void onTick(long millisUntilFinished) {
-            }
-            public void onFinish() {
-                scrollTextView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        }.start();
+        createTimerForScrolling(scrollTextView);
     }
     public void onClickDelete(View view) {
         TextView textView = findViewById(R.id.text_view);
@@ -127,106 +134,110 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
     }
     public void onClickFunction(View view) throws ParserException {
         TextView textView = findViewById(R.id.text_view);
+        String textViewString = textView.getText().toString();
         TextView historyTextView = findViewById(R.id.history);
         String resStr;
         Parser parser = new Parser();
         if (!textView.getText().toString().isEmpty()){
+            try{
+                parser.evaluate(textViewString,notation);
+            }catch (ParserException e){
+                showToast(e.toString());
+                return;
+            }
             switch (view.getId()){
                 case R.id.button_sin:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.sin(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"sin("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("sin("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.sin(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"sin("+textViewString+")="+resStr);
                     break;
                 case R.id.button_cos:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.cos(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"cos("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("cos("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.cos(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"cos("+textViewString+")="+resStr);
                     break;
                 case R.id.button_ctg:
-                    resStr = NotationChanger.changeNotation(Double.toString(1/Math.tan(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"ctg("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("ctg("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(1/Math.tan(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"ctg("+textViewString+")="+resStr);
                     break;
                 case R.id.button_cube:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.pow(parser.evaluate(textView.getText().toString(),notation),3)),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+textView.getText().toString()+"^3="+resStr);
-                    else
-                        historyTextView.append(textView.getText().toString()+"^3="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.pow(parser.evaluate(textViewString,notation),3)),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,textViewString+"^3="+resStr);
                     break;
                 case R.id.button_tan:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.tan(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"tg("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("tg("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.tan(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"tg("+textViewString+")="+resStr);
                     break;
                 case R.id.button_exp:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.exp(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"exp("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("exp("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.exp(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"exp("+textViewString+")="+resStr);
                     break;
                 case R.id.button_ln:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.log(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"ln("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("ln("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.log(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"ln("+textViewString+")="+resStr);
                     break;
                 case R.id.button_log:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.log10(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"log("+textView.getText().toString()+")="+resStr);
-                    else
-                        historyTextView.append("log("+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.log10(parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"log("+textViewString+")="+resStr);
                     break;
                 case R.id.button_minus1:
-                    resStr = NotationChanger.changeNotation(Double.toString(1/(parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"1/"+textView.getText().toString()+"="+resStr);
-                    else
-                        historyTextView.append("1/"+textView.getText().toString()+")="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(1/parser.evaluate(textViewString,notation)),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"1/"+textViewString+"="+resStr);
                     break;
                 case R.id.button_square:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.pow(parser.evaluate(textView.getText().toString(),notation),2)),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+textView.getText().toString()+"^2="+resStr);
-                    else
-                        historyTextView.append(textView.getText().toString()+"^2="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.pow(parser.evaluate(textViewString,notation),2)),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,textViewString+"^2="+resStr);
                     break;
                 case R.id.button_two_power:
-                    resStr = NotationChanger.changeNotation(Double.toString(Math.pow(2, parser.evaluate(textView.getText().toString(),notation))),10,notation);
-                    if(!historyTextView.getText().toString().isEmpty())
-                        historyTextView.append('\n'+"2^"+textView.getText().toString()+"="+resStr);
-                    else
-                        historyTextView.append("2^"+textView.getText().toString()+"="+resStr);
+                    resStr = NotationChanger.changeNotation(
+                            Double.toString(Math.pow(2, parser.evaluate(textViewString,notation))),
+                            10,
+                            notation);
+                    pasteStringInTextView(historyTextView,"2^"+textViewString+"="+resStr);
                     break;
             }
         }
         if (view.getId()==R.id.button_random)
-            textView.setText(NotationChanger.changeNotation(Double.toString(Math.random()),10,notation));
+            textView.setText(NotationChanger.changeNotation(
+                    Double.toString(Math.random()),
+                    10,
+                    notation));
         final ScrollView scrollTextView = findViewById(R.id.scroll_text_view);
-        new CountDownTimer(100,100) {
-            public void onTick(long millisUntilFinished) {
-            }
-            public void onFinish() {
-                scrollTextView.fullScroll(ScrollView.FOCUS_DOWN);
-            }
-        }.start();
+        createTimerForScrolling(scrollTextView);
     }
     public boolean onOptionsItemSelected(MenuItem item){
         fTrans = getFragmentManager().beginTransaction();
         Parser parser = new Parser();
         TextView textView = findViewById(R.id.text_view);
+        String textViewString = textView.getText().toString();
         TextView historyTextView = findViewById(R.id.history);
         historyTextView.setText("");
         String tempString="";
@@ -249,10 +260,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
             case R.id.bin:
                 if(!textView.getText().toString().isEmpty()) {
                     try {
-                        tempString = NotationChanger.changeNotation(Double.toString(parser.evaluate(textView.getText().toString(), notation)), notation, 2);
+                        tempString = NotationChanger.changeNotation(
+                                Double.toString(parser.evaluate(textViewString, notation)),
+                                10,
+                                2);
                     } catch (ParserException e){
-                        Toast toast = Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT);
-                        toast.show();
+                        showToast(e.toString());
                         tempString = "";
                     }
                 }
@@ -265,10 +278,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
             case R.id.oct:
                 if(!textView.getText().toString().isEmpty()) {
                     try {
-                        tempString = NotationChanger.changeNotation(Double.toString(parser.evaluate(textView.getText().toString(), notation)), notation, 8);
+                        tempString = NotationChanger.changeNotation(
+                                Double.toString(parser.evaluate(textViewString, notation)),
+                                10,
+                                8);
                     } catch (ParserException e){
-                        Toast toast = Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT);
-                        toast.show();
+                        showToast(e.toString());
                         tempString = "";
                     }
                 }
@@ -281,10 +296,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
             case R.id.dec:
                 if(!textView.getText().toString().isEmpty()) {
                     try {
-                        tempString = NotationChanger.changeNotation(Double.toString(parser.evaluate(textView.getText().toString(), notation)), notation, 10);
+                        tempString = NotationChanger.changeNotation(
+                                Double.toString(parser.evaluate(textViewString, notation)),
+                                10,
+                                10);
                     } catch (ParserException e){
-                        Toast toast = Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT);
-                        toast.show();
+                        showToast(e.toString());
                         tempString = "";
                     }
                 }
@@ -297,10 +314,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
             case R.id.hex:
                 if(!textView.getText().toString().isEmpty()) {
                     try {
-                        tempString = NotationChanger.changeNotation(Double.toString(parser.evaluate(textView.getText().toString(), notation)), notation, 16);
+                        tempString = NotationChanger.changeNotation(
+                                Double.toString(parser.evaluate(textViewString, notation)),
+                                10,
+                                16);
                     } catch (ParserException e){
-                        Toast toast = Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT);
-                        toast.show();
+                        showToast(e.toString());
                         tempString = "";
                     }
                 }
@@ -315,11 +334,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener{
         }
     }
     public void enableNButtons(ArrayList<Button> aLButtons,int nButtons){
-        if(nButtons>aLButtons.size())
+        if(nButtons>=10)
             for (Button button:aLButtons)
                 button.setEnabled(true);
         else
             for(int i=0;i<nButtons;i++)
                 aLButtons.get(i).setEnabled(true);
+    }
+    private void showToast(String string){
+        Toast toast = Toast.makeText(this, string ,Toast.LENGTH_SHORT);
+        toast.show();
     }
 }

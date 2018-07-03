@@ -1,6 +1,5 @@
 package com.kirirushi.calculator;
 
-import android.support.annotation.NonNull;
 
 public class Parser {
 
@@ -14,6 +13,7 @@ public class Parser {
     private final int UNBALPARENS = 1;  //  Несовпадение количества открытых и закрытых скобок
     private final int NOEXP = 2;        //  Отсутствует выражение при запуске анализатора
     private final int DIVBYZERO = 3;    //  Ошибка деления на ноль
+    private final int INFINITY = 4;
 
     //  Лексема, определяющая конец выражения
     private final String EOF = "\0";
@@ -203,7 +203,10 @@ public class Parser {
         switch (tokType) {
             case NUMBER:
                 try {
-                    result = Double.parseDouble(NotationChanger.changeNotation(token, notation,10));
+                    String resString = NotationChanger.changeNotation(token, notation,10);
+                    if (resString.equals(NotationChanger.INFINITY))
+                        handleErr(INFINITY);
+                    result = Double.parseDouble(resString);
                 } catch (NumberFormatException exc) {
                     handleErr(SYNTAXERROR);
                 }
@@ -223,7 +226,8 @@ public class Parser {
                 "Ошибка синтаксиса",
                 "Несбалансированные скобки",
                 "Пустая строка",
-                "Деление на ноль"
+                "Деление на ноль",
+                "Бесконечность"
         };
         throw new ParserException(err[nOEXP2]);
     }
